@@ -25,7 +25,9 @@ class MathHelper {
     static crossProduct(a: [number, number, number], b: [number, number, number]) {
         let out: [number, number, number] = [0,0,0];
 
-        //todo
+        out[0] = a[1]*b[2] - a[2]*b[1];
+        out[1] = - a[0]*b[2] + a[2]*b[0];
+        out[2] = a[0]*b[1] - a[2]*b[0];
 
         return out;
     }

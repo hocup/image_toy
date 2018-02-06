@@ -5,5 +5,5 @@
 public/**/*.js
 public/**/*.map
 
-# Ignore the node modules 
+# Ignore the node modules
 node_modules
