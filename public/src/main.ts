@@ -1,3 +1,5 @@
+let graphManager: GraphingManager;
+
 window.onload = () => {
     let imageCanvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('imageCanvas');
     let imageCanvasContext: CanvasRenderingContext2D = imageCanvas.getContext("2d");
@@ -15,6 +17,12 @@ window.onload = () => {
 
     let pm = new PopulationManager(generatedDrawingManager, imageDrawingManager);
     pm.init();
+
+    let graphElement = <HTMLCanvasElement>document.getElementById('fitnessgraph')
+    let graphContext = graphElement.getContext('2d');
+    graphManager = new GraphingManager(graphContext, graphElement.width, graphElement.height);
+
+
     setTimeout(() => {cycleCallback(pm)}, 200);
 
 }
@@ -24,6 +32,14 @@ let cycleCallback = (pm: PopulationManager, frame: number = 0) => {
     if(pm.generation < 200) {
         pm.createNextGeneration().then(
             () => {
+                let line = pm.population.map(
+                    (gen: SpecimenModel[], indx: number): [number, number] => {
+
+                        return [indx, gen[0].fitness + 1000000];
+                    }
+                );
+                graphManager.drawLineGraph(line);
+
                 setTimeout(() => {cycleCallback(pm)}, 1000);
             }
         );

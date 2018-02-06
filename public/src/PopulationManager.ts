@@ -3,6 +3,8 @@ class PopulationManager {
     population: SpecimenModel[][] = [];
     maxPop: number = 400;
 
+    mutationRate:  number = 0.05;
+
     generation: number = 0;
 
     samplePoints: [number, number][];
@@ -16,6 +18,9 @@ class PopulationManager {
     }
 
     init() {
+        this.population = [];
+        this.generation = 0;
+
         this.samplePoints = PopulationManager.getRandomPoints(9000);
         this.population[0] = this.generateRandomPop();
         this.population[0].forEach(
@@ -62,7 +67,7 @@ class PopulationManager {
                 // Mutate the offsprings
                 offsprings.forEach(
                     (o) => {
-                        o.mutate();
+                        o.mutate(this.mutationRate);
                     }
                 );
 
