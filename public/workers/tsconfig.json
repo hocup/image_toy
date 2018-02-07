@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "noImplicitAny": true,
+        "lib": ["webworker", "es6"],
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outFile": "./js/worker.js",
+        "sourceMap": true
+    },
+    "include": [
+        "./worker.ts"
+    ]
+}

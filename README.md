@@ -14,10 +14,11 @@ If you don't already have typescript installed, you will need to install that as
 npm install -g typescript
 ```
 
-After that, it is a matter of compiling the script form the `public` folder and starting up the server:
+After that, it is a matter of compiling the scripts from the `public` folder and starting up the server:
 ```
 cd public
 tsc
+tsc -p workers/
 cd ..
 node .
 ```

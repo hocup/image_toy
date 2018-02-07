@@ -3,7 +3,7 @@ class PopulationManager {
     population: SpecimenModel[][] = [];
     maxPop: number = 400;
 
-    mutationRate:  number = 0.05;
+    mutationRate:  number = 0;//0.05;
 
     generation: number = 0;
 
@@ -93,6 +93,9 @@ class PopulationManager {
                 // Cull the population
                 this.population[this.generation] = this.population[this.generation].slice(0,this.maxPop);
               
+                let wrkr: Worker = new Worker("./workers/js/worker.js");
+                let listner = wrkr.addEventListener("message", (e) => {console.log("From worker",e)});
+                wrkr.postMessage(this.population[this.generation][0].triangles);
 
                 // Hack to draw the best result soo far
                 this.getFitness(this.population[this.generation][0].triangles);
@@ -122,6 +125,7 @@ class PopulationManager {
 
     // Assumes the image drawing manager has already drawn the source image
     getFitness(img: TriangleModel[]): number {
+        let start = window.performance.now();
         let out = 0;
 
         this.gdm.clear();
@@ -147,6 +151,10 @@ class PopulationManager {
         // } else {
         //     return -out;
         // }
+
+        
+
+        // console.log("Get fitness finished in ", window.performance.now() - start);
         return -out;
     }
 
@@ -158,7 +166,7 @@ class PopulationManager {
         return points;
     }
     
-    static getRandomTriangles = (num: number = 5) => {
+    static getRandomTriangles = (num: number = 20) => {
         let triangles: TriangleModel[] = [];
         for(let i = 0; i < num; i++) {
             let t = new TriangleModel();
@@ -166,6 +174,7 @@ class PopulationManager {
             for(let i = 0; i < 3; i++) {
                 t.points[i] = [Math.random(), Math.random()];
             }
+            t.forceClockwise();
             triangles.push(t);
         }
     
