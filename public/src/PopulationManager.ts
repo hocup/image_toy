@@ -91,7 +91,15 @@ class PopulationManager {
                 this.population[this.generation].forEach(
                     (s) => {
                         if(!s.fitness) {
-                            s.fitness = s.getFitness(this.gdm,this.samplePoints,this.sourceColors);
+                            // let start = window.performance.now();
+                            // s.fitness = s.getFitness(this.gdm,this.samplePoints,this.sourceColors);
+                            // let tCanvas = window.performance.now() - start;
+                            // start = window.performance.now();
+                            // let testFitness = s.getFitnessNoCanvas(this.samplePoints, this.sourceColors);
+                            // let tNoCanvas = window.performance.now() - start;
+                            // console.log(s.fitness + " (" + tCanvas + ")", testFitness + " (" + tNoCanvas + ")");
+
+                            s.fitness = s.getFitnessNoCanvas(this.samplePoints, this.sourceColors);
                         }
                     }
                 );

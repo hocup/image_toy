@@ -24,4 +24,11 @@ class ColorModel {
     clone(): ColorModel {
         return new ColorModel(this.red, this.green, this.blue, this.alpha);
     }
+
+    add(c: ColorModel): void {
+        // Assumes this color already has alpha of 1 
+        this.red = Math.floor(c.alpha * c.red + (1 - c.alpha) * this.red);
+        this.green = Math.floor(c.alpha * c.green + (1 - c.alpha) * this.green);
+        this.blue = Math.floor(c.alpha * c.blue + (1 - c.alpha) * this.blue);
+    }
 }

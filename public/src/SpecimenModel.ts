@@ -1,7 +1,7 @@
 // Couldn't come up with a better class name
 class SpecimenModel {
     fitness: number;
-    // clearColor: ColorModel;
+    clearColor: ColorModel;
     
     constructor (public triangles: TriangleModel[]){};
 
@@ -9,7 +9,7 @@ class SpecimenModel {
         let out = 0;
         let img = this.triangles;
 
-        gdm.clear();
+        gdm.clear(this.clearColor);
         for(let i = 0; i < img.length; i++) {
             gdm.drawTriangle(img[i]);
         }
@@ -22,9 +22,39 @@ class SpecimenModel {
         return -out;
     }
 
+    getFitnessNoCanvas(samplePoints: [number, number][], sourceColors: ColorModel[]): number {
+        let out = samplePoints.reduce(
+            (acc, point, index) => {
+                let c = this.clearColor ? this.clearColor : new ColorModel(122,122,122,1);
+
+                let touchedTriangles = this.triangles.filter(
+                    (t: TriangleModel) => {
+                        return t.containsPoint(point);
+                    }
+                );
+
+                touchedTriangles.forEach(
+                    (t: TriangleModel) => {
+                        c.add(t.color);
+                    }
+                );
+
+                let d = c.distFrom(sourceColors[index]);
+
+                acc += Math.sqrt(Math.pow(d, 2));
+                return acc;
+            }
+        , 0);
+        
+        
+
+        return -out;
+    }
+
     mutate(mutationRate: number = 0.05, colorShiftScaler: number = 10, positionShiftScaler: number = 0.2){
         this.triangles.forEach(
             (t) => {
+
                 // Tweak the points
                 for(let i = 0; i < t.points.length; i++) {
                     if(Math.random() < mutationRate){
@@ -47,6 +77,14 @@ class SpecimenModel {
                 }
             }
         );
+
+        for(let i = 1; i < this.triangles.length; i++) {
+            if(Math.random() < mutationRate) {
+                let tmp = this.triangles[i];
+                this.triangles[i] = this.triangles[i-1];
+                this.triangles[i-1] = tmp;
+            }
+        }
     }
 
     breed(s: SpecimenModel): SpecimenModel[] {

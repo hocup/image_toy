@@ -10,8 +10,13 @@ class DrawingManager {
         
     }
     
-    clear() {
-        this.imageContext.fillStyle = this.clearColor.toString();
+    clear(clearColor: ColorModel = null) {
+        if(clearColor == null) {
+            this.imageContext.fillStyle = this.clearColor.toString();
+        } else {
+            this.imageContext.fillStyle = clearColor.toString();
+        }
+        
         this.imageContext.fillRect(0,0,this.width,this.height);
     }
 

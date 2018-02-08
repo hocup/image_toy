@@ -45,8 +45,8 @@ let cycleCallback = (pm: PopulationManager, frame: number = 0) => {
             }
         );
     } else {
-        pm.getFitness(pm.population[frame][0].triangles);
-        setTimeout(() => {cycleCallback(pm, (frame + 1) % 200)}, 200);
+        // pm.getFitness(pm.population[frame][0].triangles);
+        // setTimeout(() => {cycleCallback(pm, (frame + 1) % 200)}, 200);
     }
 }
 
