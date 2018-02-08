@@ -1,8 +1,26 @@
 // Couldn't come up with a better class name
 class SpecimenModel {
-    triangles: TriangleModel[];
     fitness: number;
     // clearColor: ColorModel;
+    
+    constructor (public triangles: TriangleModel[]){};
+
+    getFitness(gdm: DrawingManager, samplePoints: [number, number][], sourceColors: ColorModel[]): number {
+        let out = 0;
+        let img = this.triangles;
+
+        gdm.clear();
+        for(let i = 0; i < img.length; i++) {
+            gdm.drawTriangle(img[i]);
+        }
+
+        for(let i = 0; i < samplePoints.length; i++) {
+            let d = sourceColors[i].distFrom(gdm.sampleCanvas(samplePoints[i]));
+            out += Math.sqrt(Math.pow(d, 2));
+        }
+
+        return -out;
+    }
 
     mutate(mutationRate: number = 0.05, colorShiftScaler: number = 10, positionShiftScaler: number = 0.2){
         this.triangles.forEach(
@@ -15,6 +33,8 @@ class SpecimenModel {
                         t.points[i][1] = MathHelper.clamp(positionShiftScaler * shift[1] + t.points[i][1], 0, 1);
                     }
                 }
+
+                t.forceClockwise();
 
                 // Tweak the colors
                 if(Math.random() < mutationRate) {
@@ -34,13 +54,16 @@ class SpecimenModel {
 
         let numOffsprings = 4 + Math.floor(Math.abs(MathHelper.getNormalDuad()[0]));
         for(let i = 0; i < numOffsprings; i++) {
-            let offspring = new SpecimenModel();
-            offspring.triangles = [];
+            
+            let triangles: TriangleModel[] = [];
 
-            //TODO: Handle different numbers of trianglesin the specimens, maybe?
+            //TODO: Handle different numbers of triangles in the specimens, maybe?
             for(let j = 0; j < this.triangles.length; j++) {
-                offspring.triangles[j] = Math.random() > 0.5 ? this.triangles[j].clone() : s.triangles[j].clone();
+                triangles[j] = Math.random() > 0.5 ? this.triangles[j].clone() : s.triangles[j].clone();
             }
+
+            let offspring = new SpecimenModel(triangles);
+
             out.push(offspring);
         }
 

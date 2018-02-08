@@ -18,18 +18,13 @@ class TriangleModel {
     }
 
     containsPoint(p:[number, number]): boolean {
-        // TODO
         let out = true;
 
-
-        
         for(let i = 0; out && i < this.points.length; i++) {
             let org = this.points[i];
 
             let b: [number, number, number] = [p[0] - org[0], p[1] - org[1], 0];
             let a: [number, number, number] = [this.points[(i+1)%this.points.length][0] - org[0], this.points[(i+1)%this.points.length][1] - org[1], 0];
-
-            console.log(a, b, MathHelper.crossProduct(a,b)[2]);
 
             out = MathHelper.crossProduct(a,b)[2] < 0;
         }

@@ -3,7 +3,7 @@ class PopulationManager {
     population: SpecimenModel[][] = [];
     maxPop: number = 400;
 
-    mutationRate:  number = 0;//0.05;
+    mutationRate:  number = 0.25;
 
     generation: number = 0;
 
@@ -22,10 +22,18 @@ class PopulationManager {
         this.generation = 0;
 
         this.samplePoints = PopulationManager.getRandomPoints(9000);
+
+        if(!this.sourceColors || !this.sourceColors.length) {
+            this.sourceColors = [];
+            for(let i = 0; i < this.samplePoints.length; i++) {
+                this.sourceColors[i] = this.idm.sampleCanvas(this.samplePoints[i]);
+            }
+        }
+
         this.population[0] = this.generateRandomPop();
         this.population[0].forEach(
             (s: SpecimenModel) => {
-                s.fitness = this.getFitness(s.triangles);
+                s.fitness = s.getFitness(this.gdm, this.samplePoints, this.sourceColors)
             }
         );
         this.population[0].sort(
@@ -37,10 +45,7 @@ class PopulationManager {
         this.generation = 1;
 
         this.gdm.clear();
-        let img = this.population[0][0].triangles;
-        for(let t in img) {
-            this.gdm.drawTriangle(img[t]);
-        }
+        this.population[0][0].getFitness(this.gdm, this.samplePoints, this.sourceColors)
     }
 
     createNextGeneration(): Promise<null> {
@@ -48,13 +53,19 @@ class PopulationManager {
             (resolve, reject) => {
                 // Create the new sample points
                 // this.samplePoints = PopulationManager.getRandomPoints(this.samplePoints.length);
+                if(!this.sourceColors || !this.sourceColors.length) {
+                    this.sourceColors = [];
+                    for(let i = 0; i < this.samplePoints.length; i++) {
+                        this.sourceColors[i] = this.idm.sampleCanvas(this.samplePoints[i]);
+                    }
+                }
 
                 // Create the new generation's array
                 this.population[this.generation] = [];
 
                 // Select the top segment of the previous generation for breeding
                 // There is something slightly uncomfortable about my variable naming here
-                let breedingStock = this.population[this.generation - 1].slice(0,this.maxPop/6);
+                let breedingStock = this.population[this.generation - 1].slice(0,this.maxPop);
                 breedingStock.sort((a,b) => {return Math.random() - 0.5;});
                 breedingStock.sort((a,b) => {return Math.random() - 0.5;});
 
@@ -80,7 +91,7 @@ class PopulationManager {
                 this.population[this.generation].forEach(
                     (s) => {
                         if(!s.fitness) {
-                            s.fitness = this.getFitness(s.triangles);
+                            s.fitness = s.getFitness(this.gdm,this.samplePoints,this.sourceColors);
                         }
                     }
                 );
@@ -93,12 +104,19 @@ class PopulationManager {
                 // Cull the population
                 this.population[this.generation] = this.population[this.generation].slice(0,this.maxPop);
               
-                let wrkr: Worker = new Worker("./workers/js/worker.js");
-                let listner = wrkr.addEventListener("message", (e) => {console.log("From worker",e)});
-                wrkr.postMessage(this.population[this.generation][0].triangles);
+                // let wrkr: Worker = new Worker("./workers/js/worker.js");
+                // let listner = wrkr.addEventListener("message", 
+                //     (e) => {
+                        
+                //         console.log("From worker",e);
+                //         wrkr.terminate();
+                //     }
+                // );
+                // wrkr.postMessage(this.population[this.generation][0].triangles);
 
                 // Hack to draw the best result soo far
-                this.getFitness(this.population[this.generation][0].triangles);
+                // this.getFitness(this.population[this.generation][0].triangles);
+                this.population[this.generation][0].getFitness(this.gdm,this.samplePoints,this.sourceColors)
                 console.log(this.population[this.generation][0].fitness,
                     this.population[this.generation][1].fitness,
                     this.population[this.generation][this.population[this.generation].length-1].fitness);
@@ -115,8 +133,7 @@ class PopulationManager {
     private generateRandomPop(num: number = 40): SpecimenModel[] {
         let out: SpecimenModel[] = [];
         for(let i = 0; i < num; i++) {
-            let specimen = new SpecimenModel();
-            specimen.triangles =  PopulationManager.getRandomTriangles();
+            let specimen = new SpecimenModel(PopulationManager.getRandomTriangles());
             out.push(specimen)
         }
 
@@ -166,11 +183,11 @@ class PopulationManager {
         return points;
     }
     
-    static getRandomTriangles = (num: number = 20) => {
+    static getRandomTriangles = (num: number = 15) => {
         let triangles: TriangleModel[] = [];
         for(let i = 0; i < num; i++) {
             let t = new TriangleModel();
-            t.color = new ColorModel(Math.random()*255, Math.random()*255, Math.random()*255);
+            t.color = new ColorModel(Math.random()*255, Math.random()*255, Math.random()*255, 0.5);
             for(let i = 0; i < 3; i++) {
                 t.points[i] = [Math.random(), Math.random()];
             }

@@ -23,8 +23,8 @@ window.onload = () => {
     graphManager = new GraphingManager(graphContext, graphElement.width, graphElement.height);
 
 
-    // setTimeout(() => {cycleCallback(pm)}, 200);
-    pm.createNextGeneration();
+    setTimeout(() => {cycleCallback(pm)}, 200);
+    // pm.createNextGeneration();
 
 }
 
