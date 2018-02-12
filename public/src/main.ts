@@ -34,7 +34,7 @@ let cycleCallback = (pm: PopulationManager, frame: number = 0) => {
         pm.createNextGeneration().then(
             () => {
                 let line = pm.population.map(
-                    (gen: SpecimenModel[], indx: number): [number, number] => {
+                    (gen: TriangleSpecimenModel[], indx: number): [number, number] => {
 
                         return [indx, gen[0].fitness + 1000000];
                     }

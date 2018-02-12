@@ -1,5 +1,16 @@
+interface ISpecimenModel {
+    type: SpecimenType;
+    fitness: number;
+    clearColor: ColorModel;
+    getFitness(gdm: DrawingManager, samplePoints: [number, number][], sourceColors: ColorModel[]): number;
+    getFitnessNoCanvas(samplePoints: [number, number][], sourceColors: ColorModel[]): number;
+    mutate(mutationRate: number, colorShiftScaler: number, positionShiftScaler: number): void;
+    breed(s: ISpecimenModel): ISpecimenModel[];
+}
+
 // Couldn't come up with a better class name
-class SpecimenModel {
+class TriangleSpecimenModel implements ISpecimenModel{
+    type: SpecimenType = SpecimenType.TRIANGLE_SPECIMEN;
     fitness: number;
     clearColor: ColorModel;
     
@@ -51,7 +62,7 @@ class SpecimenModel {
         return -out;
     }
 
-    mutate(mutationRate: number = 0.05, colorShiftScaler: number = 10, positionShiftScaler: number = 0.2){
+    mutate(mutationRate: number = 0.05, colorShiftScaler: number = 10, positionShiftScaler: number = 0.2) {
         this.triangles.forEach(
             (t) => {
 
@@ -87,8 +98,8 @@ class SpecimenModel {
         }
     }
 
-    breed(s: SpecimenModel): SpecimenModel[] {
-        let out: SpecimenModel[] = [];
+    breed(s: TriangleSpecimenModel): TriangleSpecimenModel[] {
+        let out: TriangleSpecimenModel[] = [];
 
         let numOffsprings = 4 + Math.floor(Math.abs(MathHelper.getNormalDuad()[0]));
         for(let i = 0; i < numOffsprings; i++) {
@@ -100,7 +111,7 @@ class SpecimenModel {
                 triangles[j] = Math.random() > 0.5 ? this.triangles[j].clone() : s.triangles[j].clone();
             }
 
-            let offspring = new SpecimenModel(triangles);
+            let offspring = new TriangleSpecimenModel(triangles);
 
             out.push(offspring);
         }

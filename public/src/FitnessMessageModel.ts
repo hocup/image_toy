@@ -1,6 +1,11 @@
 class FitnessMessageModel {
-    samplePoints: [number, number][]
-    bgColor: ColorModel;
-    img: TriangleModel[];
+    callbackId: string;
+    samplePoints: [number, number][];
+    specimen: ISpecimenModel;
     sourceColors: ColorModel[];
+}
+
+class FitnessMessageResponse {
+    fitness: number;
+    callbackId: string;
 }

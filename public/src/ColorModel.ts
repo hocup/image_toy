@@ -1,9 +1,9 @@
 class ColorModel {
     constructor(
-        private red: number = 0,
-        private green: number = 0,
-        private blue: number = 0,
-        private alpha: number = 0.9
+        public red: number = 0,
+        public green: number = 0,
+        public blue: number = 0,
+        public alpha: number = 0.9
     ){}
 
     toString(){

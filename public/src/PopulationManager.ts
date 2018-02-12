@@ -1,6 +1,8 @@
 class PopulationManager {
 
-    population: SpecimenModel[][] = [];
+    workerManager: WorkerManager;
+
+    population: TriangleSpecimenModel[][] = [];
     maxPop: number = 400;
 
     mutationRate:  number = 0.25;
@@ -14,7 +16,7 @@ class PopulationManager {
         private gdm: DrawingManager, 
         private idm: DrawingManager
     ) {
-        
+        this.workerManager = new WorkerManager();
     }
 
     init() {
@@ -32,7 +34,7 @@ class PopulationManager {
 
         this.population[0] = this.generateRandomPop();
         this.population[0].forEach(
-            (s: SpecimenModel) => {
+            (s: TriangleSpecimenModel) => {
                 s.fitness = s.getFitness(this.gdm, this.samplePoints, this.sourceColors)
             }
         );
@@ -49,7 +51,8 @@ class PopulationManager {
     }
 
     createNextGeneration(): Promise<null> {
-        return new Promise<null>(
+        let start: number = new Date().getTime();
+        return new Promise<any>(
             (resolve, reject) => {
                 // Create the new sample points
                 // this.samplePoints = PopulationManager.getRandomPoints(this.samplePoints.length);
@@ -70,7 +73,7 @@ class PopulationManager {
                 breedingStock.sort((a,b) => {return Math.random() - 0.5;});
 
                 // Create the offsprings
-                let offsprings: SpecimenModel[] = [];
+                let offsprings: TriangleSpecimenModel[] = [];
                 for(let i = 0; i < breedingStock.length/2; i++) {
                     offsprings.push(...breedingStock[i].breed(breedingStock[breedingStock.length-1]));
                 }
@@ -87,22 +90,17 @@ class PopulationManager {
                 this.population[this.generation].push(...offsprings);
                 this.population[this.generation].push(...this.generateRandomPop(10));
 
+                
                 // Re-compute the fitness
-                this.population[this.generation].forEach(
-                    (s) => {
-                        if(!s.fitness) {
-                            // let start = window.performance.now();
-                            // s.fitness = s.getFitness(this.gdm,this.samplePoints,this.sourceColors);
-                            // let tCanvas = window.performance.now() - start;
-                            // start = window.performance.now();
-                            // let testFitness = s.getFitnessNoCanvas(this.samplePoints, this.sourceColors);
-                            // let tNoCanvas = window.performance.now() - start;
-                            // console.log(s.fitness + " (" + tCanvas + ")", testFitness + " (" + tNoCanvas + ")");
+                // resolve(this.workerManager.baselineFitnessCanvas(this.population[this.generation], this.samplePoints, this.sourceColors, this.gdm));
+                // resolve(this.workerManager.baselineFitnessNoCanvas(this.population[this.generation], this.samplePoints, this.sourceColors));
+                resolve(this.workerManager.getFitnessReuse(this.population[this.generation], this.samplePoints, this.sourceColors));
+                
+            }
+        ).then(
+            (p) => {
+                console.log("beep", new Date().getTime() - start);
 
-                            s.fitness = s.getFitnessNoCanvas(this.samplePoints, this.sourceColors);
-                        }
-                    }
-                );
                 this.population[this.generation].sort(
                     (sa, sb) => {
                         return sb.fitness - sa.fitness;
@@ -112,18 +110,9 @@ class PopulationManager {
                 // Cull the population
                 this.population[this.generation] = this.population[this.generation].slice(0,this.maxPop);
               
-                // let wrkr: Worker = new Worker("./workers/js/worker.js");
-                // let listner = wrkr.addEventListener("message", 
-                //     (e) => {
-                        
-                //         console.log("From worker",e);
-                //         wrkr.terminate();
-                //     }
-                // );
-                // wrkr.postMessage(this.population[this.generation][0].triangles);
+                
 
                 // Hack to draw the best result soo far
-                // this.getFitness(this.population[this.generation][0].triangles);
                 this.population[this.generation][0].getFitness(this.gdm,this.samplePoints,this.sourceColors)
                 console.log(this.population[this.generation][0].fitness,
                     this.population[this.generation][1].fitness,
@@ -131,17 +120,15 @@ class PopulationManager {
                 console.log(this.population[this.generation].length);
 
                 this.generation ++;
-
-                // Resolve the promise
-                resolve(null);
+                return null;
             }
-        );
+        )
     }
 
-    private generateRandomPop(num: number = 40): SpecimenModel[] {
-        let out: SpecimenModel[] = [];
+    private generateRandomPop(num: number = 40): TriangleSpecimenModel[] {
+        let out: TriangleSpecimenModel[] = [];
         for(let i = 0; i < num; i++) {
-            let specimen = new SpecimenModel(PopulationManager.getRandomTriangles());
+            let specimen = new TriangleSpecimenModel(PopulationManager.getRandomTriangles());
             out.push(specimen)
         }
 
