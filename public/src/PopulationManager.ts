@@ -109,11 +109,10 @@ class PopulationManager {
                 
                 // Cull the population
                 this.population[this.generation] = this.population[this.generation].slice(0,this.maxPop);
-              
-                
 
                 // Hack to draw the best result soo far
-                this.population[this.generation][0].getFitness(this.gdm,this.samplePoints,this.sourceColors)
+                this.population[this.generation][0].getFitness(this.gdm,this.samplePoints,this.sourceColors);
+
                 console.log(this.population[this.generation][0].fitness/this.samplePoints.length,
                     this.population[this.generation][1].fitness/this.samplePoints.length,
                     this.population[this.generation][this.population[this.generation].length-1].fitness/this.samplePoints.length);
@@ -136,41 +135,6 @@ class PopulationManager {
         return out;
     }
 
-    // Assumes the image drawing manager has already drawn the source image
-    getFitness(img: TriangleModel[]): number {
-        let start = window.performance.now();
-        let out = 0;
-
-        this.gdm.clear();
-        for(let i = 0; i < img.length; i++) {
-            this.gdm.drawTriangle(img[i]);
-        }
-
-        if(!this.sourceColors || !this.sourceColors.length) {
-            this.sourceColors = [];
-            for(let i = 0; i < this.samplePoints.length; i++) {
-                this.sourceColors[i] = this.idm.sampleCanvas(this.samplePoints[i]);
-            }
-        }
-
-        for(let i = 0; i < this.samplePoints.length; i++) {
-            let d = this.sourceColors[i].distFrom(this.gdm.sampleCanvas(this.samplePoints[i]));
-            out += Math.sqrt(Math.pow(d, 2));
-        }
-
-        // Bigger is better, but watch out for divide by zeroe issues
-        // if(out == 0) {
-        //     return Number.POSITIVE_INFINITY;
-        // } else {
-        //     return -out;
-        // }
-
-        
-
-        // console.log("Get fitness finished in ", window.performance.now() - start);
-        return -out;
-    }
-
     static getRandomPoints = (num: number = 30) => {
         let points: [number, number][] = [];
         for(let i = 0; i < num; i++) {
@@ -179,7 +143,7 @@ class PopulationManager {
         return points;
     }
     
-    static getRandomTriangles = (num: number = 15) => {
+    static getRandomTriangles = (num: number = 5) => {
         let triangles: TriangleModel[] = [];
         for(let i = 0; i < num; i++) {
             let t = new TriangleModel();

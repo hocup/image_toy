@@ -1,20 +1,11 @@
 <html>
     <head>
-        <title>Genetically Generate Sweet Svg</title>
-        <script src="./main.js"></script>
+        <title>Upload</title>
     </head>
     <body>
-        <!-- <input id="screamImg" type="image"> -->
-        <img id="screamImg" src="./Mona_Lisa.jpg" style="display: none;">
-
-        <canvas id="imageCanvas" width="220" height="277">
-
-        </canvas>
-        <canvas id="generatedCanvas" width="220" height="277">
-
-        </canvas>
-
-        <br>
-        <canvas id="fitnessgraph"></canvas>
+        <form method="post" enctype="multipart/form-data" action="/upload">
+            <input type="file" name="file">
+            <input type="submit" value="Submit">
+        </form>
     </body>
 </html>

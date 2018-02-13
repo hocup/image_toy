@@ -13,7 +13,7 @@ class TriangleSpecimenModel implements ISpecimenModel{
     type: SpecimenType = SpecimenType.TRIANGLE_SPECIMEN;
     fitness: number;
     
-    clearColor: ColorModel = new ColorModel(122,122,122,1);
+    clearColor: ColorModel = new ColorModel(255,255,255,1);
     constructor (public triangles: TriangleModel[]){};
 
     getFitness(gdm: DrawingManager, samplePoints: [number, number][], sourceColors: ColorModel[]): number {

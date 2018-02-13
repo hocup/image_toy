@@ -38,7 +38,7 @@ class DrawingManager {
     }
 
     drawImage(image: HTMLImageElement) {
-        this.imageContext.drawImage(image, 0,0);
+        this.imageContext.drawImage(image, 0,0, this.width, this.height);
     }
 
     sampleCanvas(p:[number, number]): ColorModel {

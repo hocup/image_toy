@@ -8,4 +8,9 @@ public/**/*.map
 # Ignore the node modules
 node_modules
 
+# Ignore any uploaded files
 uploads
+public/uploads
+
+# Ignore sample images
+public/sample
