@@ -83,30 +83,35 @@ class WorkerManager {
     }
 
     getFitnessReuse(pop: TriangleSpecimenModel[], samplePoints: [number,number][], sourceColors: ColorModel[]) {
-        console.log("Have used ",this.lastCallback, "callback functions");
+        // console.log("Have used ",this.lastCallback, "callback functions");
+        this.callbacks = {};
         let workerPromises = pop.map(
             (s: TriangleSpecimenModel) => {
                 return new Promise(
                     (resolve, reject) => {
-                        let wrkr = this.workers[this.nextWorker];
-                        this.nextWorker = (this.nextWorker + 1) % this.workers.length;
+                        if(s.fitness) {
+                            resolve(s);
+                        } else {
+                            let wrkr = this.workers[this.nextWorker];
+                            this.nextWorker = (this.nextWorker + 1) % this.workers.length;
 
-                        this.callbacks[(++this.lastCallback) + ""] = 
-                            (fitness: number) => { 
-                                s.fitness = fitness;
-                                resolve(s);
-                                return s;
-                            }
+                            this.callbacks[(++this.lastCallback) + ""] = 
+                                (fitness: number) => { 
+                                    s.fitness = fitness;
+                                    resolve(s);
+                                    return s;
+                                }
 
-                        let fm: FitnessMessageModel = new FitnessMessageModel();
-                        fm.callbackId = this.lastCallback + "";
-                        fm.samplePoints = samplePoints;
-                        fm.sourceColors = sourceColors;
-                        fm.specimen = s;
-                        
-                        wrkr.postMessage(fm);
+                            let fm: FitnessMessageModel = new FitnessMessageModel();
+                            fm.callbackId = this.lastCallback + "";
+                            fm.samplePoints = samplePoints;
+                            fm.sourceColors = sourceColors;
+                            fm.specimen = s;
+                            
+                            wrkr.postMessage(fm);
+                        }
                     }
-                )
+                );
                 
             }
         );

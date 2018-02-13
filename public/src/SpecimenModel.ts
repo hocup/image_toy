@@ -12,8 +12,8 @@ interface ISpecimenModel {
 class TriangleSpecimenModel implements ISpecimenModel{
     type: SpecimenType = SpecimenType.TRIANGLE_SPECIMEN;
     fitness: number;
-    clearColor: ColorModel;
     
+    clearColor: ColorModel = new ColorModel(122,122,122,1);
     constructor (public triangles: TriangleModel[]){};
 
     getFitness(gdm: DrawingManager, samplePoints: [number, number][], sourceColors: ColorModel[]): number {
@@ -89,12 +89,23 @@ class TriangleSpecimenModel implements ISpecimenModel{
             }
         );
 
+        // Randomly swap triangles
         for(let i = 1; i < this.triangles.length; i++) {
             if(Math.random() < mutationRate) {
                 let tmp = this.triangles[i];
                 this.triangles[i] = this.triangles[i-1];
                 this.triangles[i-1] = tmp;
             }
+        }
+
+        // Randomly tweak the clear color
+        if(Math.random() < mutationRate) {
+            ["red","blue","green"].forEach(
+                (c: string) => {
+                    let shift = MathHelper.getNormalDuad()[0];
+                    (<any>this.clearColor)[c] = MathHelper.clamp((<any>this.clearColor)[c] + shift * colorShiftScaler, 0, 255);
+                }
+            );
         }
     }
 
@@ -112,6 +123,7 @@ class TriangleSpecimenModel implements ISpecimenModel{
             }
 
             let offspring = new TriangleSpecimenModel(triangles);
+            offspring.clearColor = 0.5 < Math.random() ? this.clearColor.clone() : s.clearColor.clone();
 
             out.push(offspring);
         }

@@ -3,7 +3,25 @@
 /// <reference path="../src/TriangleModel.ts"/>
 /// <reference path="../src/FitnessMessageModel.ts"/>
 /// <reference path="../src/SpecimenHelper.ts"/>
+/// <reference path="../src/DrawingManager.ts"/>
 /// <reference path="../src/SpecimenModel.ts"/>
+
+
+// Some declarations to appease the compiler
+declare class CanvasRenderingContext2D{
+    fillStyle: string;
+    fillRect: (x: number, y: number, w: number, h: number) =>  void;
+    moveTo: (x: number, y: number) => void;
+    lineTo: (x: number, y: number) => void;
+    beginPath: () => void;
+    fill: () => void;
+    drawImage: (i: any, x:  number, y: number) => void;
+    getImageData: (x: number, y: number, w: number, h: number) => any;
+
+};
+
+declare class HTMLImageElement{};
+
 
 onmessage = function(e) {
     // console.log('Message received from main script', e);

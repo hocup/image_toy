@@ -114,9 +114,9 @@ class PopulationManager {
 
                 // Hack to draw the best result soo far
                 this.population[this.generation][0].getFitness(this.gdm,this.samplePoints,this.sourceColors)
-                console.log(this.population[this.generation][0].fitness,
-                    this.population[this.generation][1].fitness,
-                    this.population[this.generation][this.population[this.generation].length-1].fitness);
+                console.log(this.population[this.generation][0].fitness/this.samplePoints.length,
+                    this.population[this.generation][1].fitness/this.samplePoints.length,
+                    this.population[this.generation][this.population[this.generation].length-1].fitness/this.samplePoints.length);
                 console.log(this.population[this.generation].length);
 
                 this.generation ++;
@@ -129,6 +129,7 @@ class PopulationManager {
         let out: TriangleSpecimenModel[] = [];
         for(let i = 0; i < num; i++) {
             let specimen = new TriangleSpecimenModel(PopulationManager.getRandomTriangles());
+            // specimen.clearColor = new ColorModel(Math.random()*255, Math.random()*255, Math.random()*255)
             out.push(specimen)
         }
 
@@ -184,7 +185,15 @@ class PopulationManager {
             let t = new TriangleModel();
             t.color = new ColorModel(Math.random()*255, Math.random()*255, Math.random()*255, 0.5);
             for(let i = 0; i < 3; i++) {
-                t.points[i] = [Math.random(), Math.random()];
+                t.points[i] = MathHelper.getNormalDuad();
+                t.points[i][0] *= 0.2;
+                t.points[i][0] += 0.5;
+                t.points[i][0] = MathHelper.clamp(t.points[i][0], 0, 1);
+
+                t.points[i][1] *= 0.2;
+                t.points[i][1] += 0.5;
+                t.points[i][1] = MathHelper.clamp(t.points[i][1], 0, 1);
+                // t.points[i] = [Math.random(), Math.random()];
             }
             t.forceClockwise();
             triangles.push(t);

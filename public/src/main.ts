@@ -41,7 +41,7 @@ let cycleCallback = (pm: PopulationManager, frame: number = 0) => {
                 );
                 graphManager.drawLineGraph(line);
 
-                setTimeout(() => {cycleCallback(pm)}, 1000);
+                setTimeout(() => {cycleCallback(pm)}, 200);
             }
         );
     } else {
