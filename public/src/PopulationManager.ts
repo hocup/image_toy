@@ -1,7 +1,5 @@
 class PopulationManager {
 
-    workerManager: WorkerManager;
-
     population: TriangleSpecimenModel[][] = [];
     maxPop: number = 400;
 
@@ -14,16 +12,19 @@ class PopulationManager {
 
     constructor(
         private gdm: DrawingManager, 
-        private idm: DrawingManager
+        private idm: DrawingManager,
+        private workerManager: WorkerManager
     ) {
-        this.workerManager = new WorkerManager();
+        
     }
 
-    init() {
+    init(populationSize: number = 400, numSamples: number = 9000, numTriangles: number = 12, mutationRate: number = 0.25) {
+        this.maxPop = populationSize;
+        
         this.population = [];
         this.generation = 0;
-
-        this.samplePoints = PopulationManager.getRandomPoints(9000);
+        
+        this.samplePoints = PopulationManager.getRandomPoints(numSamples);
 
         if(!this.sourceColors || !this.sourceColors.length) {
             this.sourceColors = [];
@@ -32,7 +33,7 @@ class PopulationManager {
             }
         }
 
-        this.population[0] = this.generateRandomPop();
+        this.population[0] = this.generateRandomPop(populationSize, numTriangles);
         this.population[0].forEach(
             (s: TriangleSpecimenModel) => {
                 s.fitness = s.getFitness(this.gdm, this.samplePoints, this.sourceColors)
@@ -88,7 +89,7 @@ class PopulationManager {
                 // Merge the populations
                 this.population[this.generation].push(...this.population[this.generation - 1]);
                 this.population[this.generation].push(...offsprings);
-                this.population[this.generation].push(...this.generateRandomPop(10));
+                // this.population[this.generation].push(...this.generateRandomPop(10));
 
                 
                 // Re-compute the fitness
@@ -124,10 +125,10 @@ class PopulationManager {
         )
     }
 
-    private generateRandomPop(num: number = 40): TriangleSpecimenModel[] {
+    private generateRandomPop(num: number = 400, numTriangles: number = 12): TriangleSpecimenModel[] {
         let out: TriangleSpecimenModel[] = [];
         for(let i = 0; i < num; i++) {
-            let specimen = new TriangleSpecimenModel(PopulationManager.getRandomTriangles());
+            let specimen = new TriangleSpecimenModel(PopulationManager.getRandomTriangles(numTriangles));
             // specimen.clearColor = new ColorModel(Math.random()*255, Math.random()*255, Math.random()*255)
             out.push(specimen)
         }

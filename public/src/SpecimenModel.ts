@@ -85,6 +85,7 @@ class TriangleSpecimenModel implements ISpecimenModel{
                             (<any>t.color)[c] = MathHelper.clamp((<any>t.color)[c] + shift * colorShiftScaler, 0, 255);
                         }
                     );
+                    t.color.alpha = MathHelper.clamp(t.color.alpha + (MathHelper.getNormalDuad()[0] * colorShiftScaler / 255), 0, 1);
                 }
             }
         );

@@ -15,7 +15,7 @@ declare class CanvasRenderingContext2D{
     lineTo: (x: number, y: number) => void;
     beginPath: () => void;
     fill: () => void;
-    drawImage: (i: any, x:  number, y: number) => void;
+    drawImage: (i: any, x:  number, y: number, w: number, h: number) => void;
     getImageData: (x: number, y: number, w: number, h: number) => any;
 
 };

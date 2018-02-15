@@ -1,5 +1,6 @@
 let graphManager: GraphingManager;
 let urlParams: {[key: string]: string}
+let maxGeneration: number = 200;
 
 window.onload = () => {
     // Copy-pasted from stack overflow, like all the best code
@@ -48,6 +49,8 @@ let startGenerator = () => {
     imageDrawingManager.drawImage(imageElement);
 
     
+    // TODO: Prepopulate the input fields
+
     // TODO: Apply blur
     // let imdat = imageCanvasContext.getImageData(0,0,imageCanvas.width, imageCanvas.height);
     // let newDat = new ImageData(imageCanvas.width, imageCanvas.height);
@@ -60,8 +63,17 @@ let startGenerator = () => {
     let generatedDrawingManager = new DrawingManager(generatedCanvasContext, imageCanvas.width, imageCanvas.height);
     generatedDrawingManager.clear();
 
-    let pm = new PopulationManager(generatedDrawingManager, imageDrawingManager);
-    pm.init();
+    
+    let numTriangles = urlParams.num_triangles ? (+urlParams.num_triangles) : 9;
+    let numWorkers = urlParams.num_workers ? (+urlParams.num_workers) : 4;
+    let popSize = urlParams.pop_size ? (+urlParams.pop_size) : 200;
+    let sampleSize = urlParams.sample_size ? (+urlParams.sample_size) : 500;
+    let mutationRate = urlParams.mutation_rate ? (+urlParams.mutation_rate) : 0.25;
+    maxGeneration = urlParams.num_generations ? (+urlParams.num_generations) : 200;
+
+    let wm = new WorkerManager(numWorkers);
+    let pm = new PopulationManager(generatedDrawingManager, imageDrawingManager, wm);
+    pm.init(popSize, sampleSize, numTriangles, mutationRate);
 
     let graphElement = <HTMLCanvasElement>document.getElementById('fitnessgraph')
     let graphContext = graphElement.getContext('2d');
@@ -69,13 +81,40 @@ let startGenerator = () => {
 
 
     setTimeout(() => {cycleCallback(pm)}, 200);
+    setFormInputs(urlParams.file, numWorkers, numTriangles, popSize, sampleSize, mutationRate, maxGeneration);
     // pm.createNextGeneration();
 
 }
 
+let setFormInputs = (
+        filename: string, 
+        numWorkers: number, 
+        numTriangles: number, 
+        popSize: number, 
+        sampleSize: number, 
+        mutationRate: number, 
+        numGenerations: number
+) => {
+    let fileInput = <HTMLInputElement> document.getElementById("filename_input");
+    let numWorkersInput = <HTMLInputElement> document.getElementById("num_workers");
+    let numTrianglesInput = <HTMLInputElement> document.getElementById("num_triangles");
+    let popSizeInput = <HTMLInputElement> document.getElementById("pop_size");
+    let sampleSizeInput = <HTMLInputElement> document.getElementById("sample_size");
+    let mutationRateInput = <HTMLInputElement> document.getElementById("mutation_rate");
+    let numGenerationsInput = <HTMLInputElement> document.getElementById("num_generations");
+
+    fileInput.value = filename;
+    numWorkersInput.value = numWorkers + "";
+    numTrianglesInput.value = numTriangles + "";
+    popSizeInput.value = popSize + "";
+    sampleSizeInput.value = sampleSize + "";
+    mutationRateInput.value = mutationRate + "";
+    numTrianglesInput.value = numGenerations + "";
+}
+
 let cycleCallback = (pm: PopulationManager, frame: number = 0) => {
     console.log("Working on generation ", pm.generation);
-    if(pm.generation < 200) {
+    if(pm.generation < maxGeneration) {
         pm.createNextGeneration().then(
             () => {
                 let line = pm.population.map(
