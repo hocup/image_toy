@@ -109,7 +109,7 @@ let setFormInputs = (
     popSizeInput.value = popSize + "";
     sampleSizeInput.value = sampleSize + "";
     mutationRateInput.value = mutationRate + "";
-    numTrianglesInput.value = numGenerations + "";
+    numGenerationsInput.value = numGenerations + "";
 }
 
 let cycleCallback = (pm: PopulationManager, frame: number = 0) => {
