@@ -1,0 +1,16 @@
+[Unit]
+Description=Image toy
+
+[Service]
+# Change ExecStart and WorkingDirectory below as needed
+ExecStart=/var/www/image_toy/index.js
+Restart=always
+User=nobody
+# Note RHEL/Fedora uses 'nobody', Debian/Ubuntu uses 'nogroup'
+Group=nobody  
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/var/www/image_toy
+
+[Install]
+WantedBy=multi-user.target

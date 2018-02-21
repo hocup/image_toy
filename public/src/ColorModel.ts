@@ -18,7 +18,7 @@ class ColorModel {
     }
 
     distFrom(c: ColorModel): number {
-        return Math.sqrt(Math.pow(c.red - this.red, 2) + Math.pow(c.green - this.green, 2) + Math.pow(c.blue - this.blue, 2));
+        return Math.pow(c.red - this.red, 2) + Math.pow(c.green - this.green, 2) + Math.pow(c.blue - this.blue, 2);
     }
 
     clone(): ColorModel {

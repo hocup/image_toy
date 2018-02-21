@@ -23,3 +23,19 @@ cd ..
 node .
 ```
 The server will start on port 3030, and you should be able to launch the app by pointing your browser to [http://localhost:3030](http://localhost:3030)
+
+## Running as a service
+Make a copy of `image_toy.service.template` to `image_toy.service` with appropriate changes
+Copy `image_toy.service` into `/etc/systemd/system`
+Make systemd aware of new service:
+```
+ systemctl daemon-reload
+```
+Start the service:
+```
+ systemctl start image_toy
+```
+Read logs:
+```
+ journalctl --follow -u image_toy
+```
