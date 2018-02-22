@@ -11,7 +11,7 @@ app.use(rootPath, express.static('public'));
 
 app.post(rootPath + '/upload', upload.single('file'), (req, res) => {
     console.log("UPLOADEDED FILE DATA", req.file, req.body);
-    let redirectUrl = "./generate.html?file=" + req.file.filename;
+    let redirectUrl = rootPath + "/generate.html?file=" + req.file.filename;
 
     let allowedParams = [
         "num_triangles", 

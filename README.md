@@ -1,6 +1,7 @@
 # image_toy
 
 This is a very simple attempt at a genetic algorithm to generate a set of triangles that approximate an input image.
+There is a [demo](https://gmalyshev.net/image_toy/)
 
 ## Building
 
