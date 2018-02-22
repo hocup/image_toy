@@ -5,16 +5,23 @@ const app = express();
 const multer  = require('multer')
 const upload = multer({ dest: 'public/uploads/' })
 
-// app.get('/', (req, res) => res.send('Hello World!'))
+const rootPath = process.env.IMAGE_TOY_ROOT_PATH ? process.env.IMAGE_TOY_ROOT_PATH : "";
 
+app.use(rootPath, express.static('public'));
 
-app.use(express.static('public'));
-
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post(rootPath + '/upload', upload.single('file'), (req, res) => {
     console.log("UPLOADEDED FILE DATA", req.file, req.body);
     let redirectUrl = "./generate.html?file=" + req.file.filename;
 
-    let allowedParams = ["num_triangles", "num_workers", "pop_size", "sample_size", "num_generations", "mutation_rate", "blur", ];
+    let allowedParams = [
+        "num_triangles", 
+        "num_workers", 
+        "pop_size", 
+        "sample_size", 
+        "num_generations", 
+        "mutation_rate", 
+        "blur", 
+    ];
 
     allowedParams.forEach(
         (p) => {
@@ -24,12 +31,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
         }
     )
 
-    // if(req.body.num_triangles) {
-    //     redirectUrl += "&num_triangles=" + req.body.num_triangles; 
-    // }
-    // if(req.body.num_workers) {
-    //     redirectUrl += "&num_workers=" + req.body.num_workers;
-    // }
     res.redirect(redirectUrl);
 });
 
